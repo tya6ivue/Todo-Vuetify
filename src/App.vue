@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+
 import Todo from './components/Todo.vue'
 export default {
   name: 'App',
