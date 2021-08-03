@@ -1,22 +1,77 @@
 
 
 <template>
-    <div>
-        <input  type="text" placeholder="type here"  v-model="newItems" >
-        
-        <v-btn @click="addItems" class="button" :disabled="newItems.length === 0">Add</v-btn>
-        <ul class="list">
-            <li  v-for="(item, index) in items" :key="index" :class="{completed: item.completed}">
-                 <!-- <input type="checkbox" class="list-item-toggle" @click="toggleComplete(item)">  -->
-                 <!-- <span class="text-h1">{{item.name}}</span> -->
-                <span class="text-h1">{{item.name}}</span>
-                <button  @click="deleteTask(index)">X</button>
-            </li>
-            
-        </ul>
-     <v-btn @click="SubmitData">Submit</v-btn>
-     
+  <v-app>
+    <h1>Enter Todo</h1>
+    <span>
+      <v-text-field
+        placeholder="Type here"
+        v-model="newItems"
+        clearable
+        flat
+        solo-inverted
+        hide-details
+        prepend-inner-icon="mdi-magnify"
+        label="Add"
+      ></v-text-field>
+
+      <v-btn
+        @click="addItems"
+        class="mx-2"
+        fab
+        dark
+        color="indigo"
+        :disabled="newItems.length === 0"
+      >
+        <v-icon dark> mdi-plus </v-icon></v-btn
+      >
+    </span>
+
+    <ul class="list">
+      <v-list-item v-for="(item, index) in items" :key="index">
+        <v-list-item-content class="blue--text">
+          {{ item.name }}
+        </v-list-item-content>
+        <v-btn
+          @click="deleteTask(index)"
+          :loading="loading"
+          class="ma-1"
+          color="red"
+          plain
+          >Delete</v-btn
+        >
+      </v-list-item>
+    </ul>
+    <!-- <v-footer>
+      <v-btn
+        :loading="loading3"
+        :disabled="loading3"
+        color="blue-grey"
+        class="ma-2 white--text"
+        @click="SubmitData"
+      >
+        Upload
+        <v-icon right dark> mdi-cloud-upload </v-icon>
+      </v-btn>
+    </v-footer> -->
+
+    <div class="text-center">
+      <v-btn dark color="red darken-2" @click="snackbar = true">
+        Upload
+        <v-icon right dark> mdi-cloud-upload </v-icon>
+      </v-btn>
+
+      <v-snackbar v-model="snackbar">
+        {{ text }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </div>
+  </v-app>
 </template>
 
 <script>
@@ -25,6 +80,10 @@ export default {
   data() {
     return {
       newItems: "",
+      loading3: false,
+      loading: false,
+      snackbar: "",
+      text: "Your data is sussesfully added",
 
       items: [
         { id: 1, name: "Jack", completed: true },
@@ -43,34 +102,20 @@ export default {
       console.log("rgg");
       this.newItems = "";
     },
-    // toggleComplete(item) {
-    //     item.completed != item.completed
-    // },
+
     deleteTask(index) {
       this.items.splice(index, 1);
     },
-    SubmitData() {
-        alert("eef")
-    }
+    // SubmitData() {
+    //   alert(this.items[1].name);
+    // },
   },
 };
 </script>
 
+
 <style scoped>
-.button {
-  color: red;
-  background-color: blue;
-}
-.list-item-toggle {
-  border: 1px solid #e8e8e8;
-  border-radius: 999px;
-  height: 21px;
-  width: 21px;
-  margin-right: 16px;
-}
-button:disabled {
-  background: #e70707;
-  color: #555;
-  box-shadow: none;
+.dfer {
+  margin-left: 10px;
 }
 </style>
