@@ -12,48 +12,39 @@
         solo-inverted
         hide-details
         prepend-inner-icon="mdi-magnify"
-        label="Add"
+        label=""
       ></v-text-field>
 
-      <v-btn
-        @click="addItems"
-        class="mx-2"
-        fab
-        dark
-        color="indigo"
-        :disabled="newItems.length === 0"
-      >
-        <v-icon dark> mdi-plus </v-icon></v-btn
-      >
+      <div>
+        <v-btn
+          @click="addItems"
+          class="mx-10"
+          fab
+          dark
+          color="indigo"
+          :disabled="newItems.length === 0"
+        >
+          <v-icon dark> mdi-plus </v-icon></v-btn
+        >
+      </div>
     </span>
 
     <ul class="list">
       <v-list-item v-for="(item, index) in items" :key="index">
-        <v-list-item-content class="blue--text">
+        <v-list-item-content class="red accent-2--text pink lighten-5">
           {{ item.name }}
         </v-list-item-content>
         <v-btn
           @click="deleteTask(index)"
           :loading="loading"
           class="ma-1"
-          color="red"
+          color="purple darken-3"
           plain
-          >Delete</v-btn
         >
+          Delete
+        </v-btn>
       </v-list-item>
     </ul>
-    <!-- <v-footer>
-      <v-btn
-        :loading="loading3"
-        :disabled="loading3"
-        color="blue-grey"
-        class="ma-2 white--text"
-        @click="SubmitData"
-      >
-        Upload
-        <v-icon right dark> mdi-cloud-upload </v-icon>
-      </v-btn>
-    </v-footer> -->
 
     <div class="text-center">
       <v-btn dark color="red darken-2" @click="snackbar = true">
@@ -80,35 +71,35 @@ export default {
   data() {
     return {
       newItems: "",
+
       loading3: false,
       loading: false,
       snackbar: "",
       text: "Your data is sussesfully added",
 
-      items: [
-        { id: 1, name: "Jack", completed: true },
-        { id: 2, name: "Nick", completed: false },
-        { id: 3, name: "Thomash", completed: false },
-      ],
+      items: [{ id: 1, name: "Jack" }],
     };
   },
   methods: {
+    sortFunc() {
+      return this.items.slice().sort(function (a, b) {
+        return a.name > b.name ? 1 : -1;
+      });
+    },
     addItems() {
       this.items.push({
-        id: this.items.length + 1,
+        id: this.sortFunc.length + 1,
         name: this.newItems,
         completed: false,
       });
-      console.log("rgg");
       this.newItems = "";
     },
 
     deleteTask(index) {
+      console.log(index);
       this.items.splice(index, 1);
+      console.log(this.items);
     },
-    // SubmitData() {
-    //   alert(this.items[1].name);
-    // },
   },
 };
 </script>
