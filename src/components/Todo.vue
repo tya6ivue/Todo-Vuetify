@@ -6,7 +6,6 @@
     <span>
       <v-text-field
         placeholder="Type here"
-        v-model="newItems"
         clearable
         flat
         solo-inverted
@@ -68,18 +67,24 @@
 <script>
 export default {
   name: "todo",
+
   data() {
     return {
-      newItems: "",
-
       loading3: false,
       loading: false,
-      snackbar: "",
+      items: this.$store.state.items,
       text: "Your data is sussesfully added",
-
-      items: [{ id: 1, name: "Jack" }],
+      newItems: [],
+      snackbar: "",
     };
   },
+
+  Computed: {
+    items() {
+      return this.$store.state.items;
+    },
+  },
+
   methods: {
     sortFunc() {
       return this.items.slice().sort(function (a, b) {
@@ -87,7 +92,7 @@ export default {
       });
     },
     addItems() {
-      this.items.push({
+      this.$store.state.items.push({
         id: this.sortFunc.length + 1,
         name: this.newItems,
         completed: false,
