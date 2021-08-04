@@ -11,7 +11,7 @@
         solo-inverted
         hide-details
         prepend-inner-icon="mdi-magnify"
-        label=""
+        v-model="newItems"
       ></v-text-field>
 
       <div>
@@ -24,13 +24,14 @@
           :disabled="newItems.length === 0"
         >
           <v-icon dark> mdi-plus </v-icon></v-btn
-        >
+        >sortFunction
       </div>
     </span>
+    {{ sortFunc() }}
 
     <ul class="list">
-      <v-list-item v-for="(item, index) in items" :key="index">
-        <v-list-item-content class="red accent-2--text pink lighten-5">
+      <v-list-item v-for="(item, index) in sortFunction" :key="index">
+        <v-list-item-content class="red--text">
           {{ item.name }}
         </v-list-item-content>
         <v-btn
@@ -65,6 +66,8 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   name: "todo",
 
@@ -80,26 +83,17 @@ export default {
   },
 
   Computed: {
-    items() {
-      return this.$store.state.items;
-    },
+    ...mapState(["items"]),
+
+    ...mapMutations(["addItems"]),
+    ...mapGetters([sortFunction]),
   },
 
   methods: {
-    sortFunc() {
-      return this.items.slice().sort(function (a, b) {
-        return a.name > b.name ? 1 : -1;
-      });
-    },
-    addItems() {
-      this.$store.state.items.push({
-        id: this.sortFunc.length + 1,
-        name: this.newItems,
-        completed: false,
-      });
+    addItems: function () {
+      this.$store.dispatch("addItems");
       this.newItems = "";
     },
-
     deleteTask(index) {
       console.log(index);
       this.items.splice(index, 1);
