@@ -19,20 +19,26 @@ export const store = new Vuex.Store({
 
   getters: {
     sortFunc: () => {
-      console.log(this.state.items);
       return this.state.items.slice().sort(function(a, b) {
         return a.state.items.name > b.state.items.name ? 1 : -1;
       });
     },
   },
   mutations: {
-    addItems: (items, payload) => {
+    sortFunc: () => {
+      return this.state.items.slice().sort(function(a, b) {
+        return a.state.items.name > b.state.items.name ? 1 : -1;
+      });
+    },
+
+    addItems: () => {
+      console.log("ddvrgrg");
       this.state.items.push({
         id: this.state.items.length + 1,
         name: this.state.newItems,
         completed: false,
       });
-      console.log(this.newItems);
+
       this.newItems = "";
     },
   },

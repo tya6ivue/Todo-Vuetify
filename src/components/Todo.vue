@@ -2,43 +2,44 @@
 
 <template>
   <v-app>
-    <h1>Enter Todo</h1>
+    <h1 class="text">Enter Todo</h1>
     <span>
       <v-text-field
         placeholder="Type here"
         clearable
         flat
         solo-inverted
-        hide-details
-        prepend-inner-icon="mdi-magnify"
+        class="mx-16"
         v-model="newItems"
       ></v-text-field>
 
-      <div>
-        <v-btn
-          @click="addItems"
-          class="mx-10"
-          fab
-          dark
-          color="indigo"
-          :disabled="newItems.length === 0"
-        >
-          <v-icon dark> mdi-plus </v-icon></v-btn
-        >sortFunction
-      </div>
+      <v-btn
+        depressed
+        @click="addItems((Addsnackbar = true))"
+        class="ml-16 mb-10"
+        dark
+        color="indigo"
+        :disabled="newItems.length === 0"
+      >
+        <v-icon dark> mdi-plus </v-icon></v-btn
+      >
     </span>
-    {{ sortFunc() }}
 
     <ul class="list">
-      <v-list-item v-for="(item, index) in sortFunction" :key="index">
-        <v-list-item-content class="red--text">
+      <v-list-item class="box" v-for="(item, index) in sortFunc()" :key="index">
+        <v-list-item-content id="table" class="red--text">
           {{ item.name }}
         </v-list-item-content>
+
+        <v-btn class="mx-2" fab outlined large color="cyan">
+          <v-icon dark> mdi-pencil </v-icon>
+        </v-btn>
+
         <v-btn
-          @click="deleteTask(index)"
+          @click="deleteTask(item.id), (snackbar = true)"
           :loading="loading"
           class="ma-1"
-          color="purple darken-3"
+          color="primary"
           plain
         >
           Delete
@@ -47,16 +48,22 @@
     </ul>
 
     <div class="text-center">
-      <v-btn dark color="red darken-2" @click="snackbar = true">
-        Upload
-        <v-icon right dark> mdi-cloud-upload </v-icon>
-      </v-btn>
-
       <v-snackbar v-model="snackbar">
-        {{ text }}
+        {{ DeletedText }}
 
         <template v-slot:action="{ attrs }">
           <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </div>
+    <div class="text-center">
+      <v-snackbar v-model="Addsnackbar">
+        {{ AddedText }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn color="red" text v-bind="attrs" @click="Addsnackbar = false">
             Close
           </v-btn>
         </template>
@@ -75,10 +82,13 @@ export default {
     return {
       loading3: false,
       loading: false,
+
       items: this.$store.state.items,
-      text: "Your data is sussesfully added",
+      DeletedText: "Your data is successfully Deleted ",
+      AddedText: "Your data is  successfully Added ",
       newItems: [],
       snackbar: "",
+      Addsnackbar: "",
     };
   },
 
@@ -86,18 +96,35 @@ export default {
     ...mapState(["items"]),
 
     ...mapMutations(["addItems"]),
-    ...mapGetters([sortFunction]),
+    ...mapGetters(["sortFunc"]),
   },
 
   methods: {
-    addItems: function () {
-      this.$store.dispatch("addItems");
+    addItems() {
+      console.log("eefreg");
+      this.$store.state.items.push({
+        name: this.newItems,
+        id: this.sortFunc.length + 1,
+      });
+
       this.newItems = "";
     },
-    deleteTask(index) {
-      console.log(index);
-      this.items.splice(index, 1);
-      console.log(this.items);
+    sortFunc() {
+      console.log("dfrgr");
+      return this.$store.state.items.slice().sort(function (a, b) {
+        return a.name > b.name ? 1 : -1;
+      });
+    },
+    deleteTask(id) {
+      console.log(this.items.length);
+      var i = 0;
+      var rindex = 0;
+      for (i = 0; i < this.items.length; i++) {
+        if (this.items[i].id == id) {
+          rindex = i;
+        }
+      }
+      this.items.splice(rindex, 1);
     },
   },
 };
@@ -105,7 +132,16 @@ export default {
 
 
 <style scoped>
-.dfer {
-  margin-left: 10px;
+.box {
+  max-width: 600px;
+  border: 1px solid rebeccapurple;
+  margin: auto;
+}
+.input {
+  max-width: 50%;
+  margin-left: 16px;
+}
+.text {
+  text-align: center;
 }
 </style>
