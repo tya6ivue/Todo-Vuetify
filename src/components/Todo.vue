@@ -74,8 +74,6 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-// import todo from '../store/modules/todo'
-// import { mapGetters } from "vuex";
 export default {
   name: "todo",
 
@@ -98,12 +96,6 @@ export default {
     },
 
     ...mapState("todo", ["items"]),
-    // ...mapGetters('todo',["sortFunc"]),
-
-    // sortFunc() {
-    //   console.log(this.$store.getters.sortFunc);
-    //   return this.$store.getters.sortFunc;
-    // },
   },
 
   methods: {
@@ -122,9 +114,7 @@ export default {
       }
       this.newItems = "";
     },
-    // sortFunc() {
-    //   return this.$store.getters.sortFunc;
-    // },
+
     deleteTask(id) {
       var i = 0;
       var rindex = 0;
