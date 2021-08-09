@@ -17,11 +17,11 @@
 
       <v-btn
         depressed
-        @click="handleAddItems(newItems, Addsnackbar = true)"
+        @click="handleAddItems(newItems, (Addsnackbar = true))"
         class="ml-16 mb-10"
         dark
         color="indigo"
-        :disabled=" this.newItems && newItems.length == 0 "
+        :disabled="this.newItems && newItems.length == 0"
       >
         <v-icon dark> mdi-plus </v-icon></v-btn
       >
@@ -35,18 +35,6 @@
         >
           {{ item.name }}
         </v-list-item-content>
-
-        <v-btn
-          v-on:click="editTask(index)"
-          class="mx-2"
-          fab
-          outlined
-          large
-          color="cyan"
-        >
-          <v-icon dark> mdi-pencil </v-icon>
-        </v-btn>
-
         <v-btn
           @click="deleteTask(item.id), (snackbar = true)"
           :loading="loading"
@@ -93,7 +81,6 @@ export default {
 
   data() {
     return {
-    
       loading3: false,
       loading: false,
       items: this.$store.state.items,
@@ -110,31 +97,29 @@ export default {
     ...mapGetters(["sortFunc"]),
 
     sortFunc() {
-        console.log(this.$store.getters.sortFunc)
-        return this.$store.getters.sortFunc
-    }
+      console.log(this.$store.getters.sortFunc);
+      return this.$store.getters.sortFunc;
+    },
   },
 
   methods: {
     ...mapActions(["addItems"]),
     handleAddItems() {
-      
-   if(this.newItems && this.newItems.length > 0 )  {
-       {
-      this.$store.dispatch("addItems", {
-        name: this.newItems,
-        id: this.items.length + 1,
-        completed: false,
-      });
-      this.newItems = "";
-       }
-    }
-    else{ 
-        alert("Enter some value")
-    }
-   },
+      if (this.newItems && this.newItems.length > 0) {
+        {
+          this.$store.dispatch("addItems", {
+            name: this.newItems,
+            id: this.items.length + 1,
+            completed: false,
+          });
+          this.newItems = "";
+        }
+      } else {
+        alert("Enter some value");
+      }
+    },
     sortFunc() {
-        return this.$store.getters.sortFunc
+      return this.$store.getters.sortFunc;
     },
     deleteTask(id) {
       console.log(this.items.length);
