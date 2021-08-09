@@ -17,7 +17,7 @@
 
       <v-btn
         depressed
-        @click="handleAddItems(newItems, (Addsnackbar = true))"
+        @click="handleAddItems((Addsnackbar = true))"
         class="ml-16 mb-10"
         dark
         color="indigo"
@@ -28,7 +28,7 @@
     </span>
 
     <ul class="list">
-      <v-list-item class="box" v-for="(item, index) in items" :key="index">
+      <v-list-item class="box" v-for="(item, index) in UpdItems" :key="index">
         <v-list-item-content
           id="table"
           class="red--text font-family: monospace"
@@ -74,8 +74,8 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-
-import { mapGetters } from "vuex";
+// import todo from '../store/modules/todo'
+// import { mapGetters } from "vuex";
 export default {
   name: "todo",
 
@@ -83,7 +83,7 @@ export default {
     return {
       loading3: false,
       loading: false,
-      items: this.$store.state.items,
+
       DeletedText: "Your data is successfully Deleted ",
       AddedText: "Your data is  successfully Added ",
       newItems: "",
@@ -92,37 +92,40 @@ export default {
     };
   },
 
-  Computed: {
-    ...mapState(["items"]),
-    ...mapGetters(["sortFunc"]),
-
-    sortFunc() {
-      console.log(this.$store.getters.sortFunc);
-      return this.$store.getters.sortFunc;
+  computed: {
+    UpdItems() {
+      return this.$store.state.todo.items;
     },
+
+    ...mapState("todo", ["items"]),
+    // ...mapGetters('todo',["sortFunc"]),
+
+    // sortFunc() {
+    //   console.log(this.$store.getters.sortFunc);
+    //   return this.$store.getters.sortFunc;
+    // },
   },
 
   methods: {
-    ...mapActions(["addItems"]),
+    ...mapActions("todo", ["addItems"]),
     handleAddItems() {
-      if (this.newItems && this.newItems.length > 0) {
+      if (this.newItems.trim && this.newItems.trim().length > 0) {
         {
-          this.$store.dispatch("addItems", {
+          this.addItems({
             name: this.newItems,
             id: this.items.length + 1,
             completed: false,
           });
-          this.newItems = "";
         }
       } else {
         alert("Enter some value");
       }
+      this.newItems = "";
     },
-    sortFunc() {
-      return this.$store.getters.sortFunc;
-    },
+    // sortFunc() {
+    //   return this.$store.getters.sortFunc;
+    // },
     deleteTask(id) {
-      console.log(this.items.length);
       var i = 0;
       var rindex = 0;
       for (i = 0; i < this.items.length; i++) {
