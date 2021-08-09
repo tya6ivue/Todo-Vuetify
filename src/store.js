@@ -1,15 +1,11 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
-    newItems: [],
-
-    loading3: false,
-    loading: false,
-    snackbar: "",
-    text: "Your data is sussesfully added",
+      
     items: [
       { id: 1, name: "Jack" },
       { id: 2, name: "Petter" },
@@ -18,33 +14,25 @@ export const store = new Vuex.Store({
   },
 
   getters: {
-    sortFunc: () => {
-      return this.state.items.slice().sort(function(a, b) {
-        return a.state.items.name > b.state.items.name ? 1 : -1;
+    sortFunc: (state) => {
+        console.log(this.items.name)
+      return state.items.slice().sort(function(a, b) {
+        return a.items.name> b.items.name ? 1 : -1;
       });
+      
     },
   },
   mutations: {
-    sortFunc: () => {
-      return this.state.items.slice().sort(function(a, b) {
-        return a.state.items.name > b.state.items.name ? 1 : -1;
-      });
-    },
+    Add_Items: (state, payload) => {
+      state.items.push(payload);
 
-    addItems: () => {
-      console.log("ddvrgrg");
-      this.state.items.push({
-        id: this.state.items.length + 1,
-        name: this.state.newItems,
-        completed: false,
-      });
-
-      this.newItems = "";
     },
   },
   actions: {
-    addItems: (context) => {
-      context.commit("addItems,paylaod");
+    addItems: ({commit}, payload) => {
+      console.log(payload)
+      commit("Add_Items", payload);
     },
   },
+  plugins: [createPersistedState()]
 });

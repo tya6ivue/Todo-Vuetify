@@ -5,6 +5,8 @@
     <h1 class="text">Enter Todo</h1>
     <span>
       <v-text-field
+        font-family:
+        monospace
         placeholder="Type here"
         clearable
         flat
@@ -15,23 +17,33 @@
 
       <v-btn
         depressed
-        @click="addItems((Addsnackbar = true))"
+        @click="handleAddItems(newItems, Addsnackbar = true)"
         class="ml-16 mb-10"
         dark
         color="indigo"
-        :disabled="newItems.length === 0"
+        :disabled=" this.newItems && newItems.length == 0 "
       >
         <v-icon dark> mdi-plus </v-icon></v-btn
       >
     </span>
 
     <ul class="list">
-      <v-list-item class="box" v-for="(item, index) in sortFunc()" :key="index">
-        <v-list-item-content id="table" class="red--text">
+      <v-list-item class="box" v-for="(item, index) in items" :key="index">
+        <v-list-item-content
+          id="table"
+          class="red--text font-family: monospace"
+        >
           {{ item.name }}
         </v-list-item-content>
 
-        <v-btn class="mx-2" fab outlined large color="cyan">
+        <v-btn
+          v-on:click="editTask(index)"
+          class="mx-2"
+          fab
+          outlined
+          large
+          color="cyan"
+        >
           <v-icon dark> mdi-pencil </v-icon>
         </v-btn>
 
@@ -73,20 +85,21 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapActions } from "vuex";
+
 import { mapGetters } from "vuex";
 export default {
   name: "todo",
 
   data() {
     return {
+    
       loading3: false,
       loading: false,
-
       items: this.$store.state.items,
       DeletedText: "Your data is successfully Deleted ",
       AddedText: "Your data is  successfully Added ",
-      newItems: [],
+      newItems: "",
       snackbar: "",
       Addsnackbar: "",
     };
@@ -94,26 +107,34 @@ export default {
 
   Computed: {
     ...mapState(["items"]),
-
-    ...mapMutations(["addItems"]),
     ...mapGetters(["sortFunc"]),
+
+    sortFunc() {
+        console.log(this.$store.getters.sortFunc)
+        return this.$store.getters.sortFunc
+    }
   },
 
   methods: {
-    addItems() {
-      console.log("eefreg");
-      this.$store.state.items.push({
+    ...mapActions(["addItems"]),
+    handleAddItems() {
+      
+   if(this.newItems && this.newItems.length > 0 )  {
+       {
+      this.$store.dispatch("addItems", {
         name: this.newItems,
-        id: this.sortFunc.length + 1,
+        id: this.items.length + 1,
+        completed: false,
       });
-
       this.newItems = "";
-    },
+       }
+    }
+    else{ 
+        alert("Enter some value")
+    }
+   },
     sortFunc() {
-      console.log("dfrgr");
-      return this.$store.state.items.slice().sort(function (a, b) {
-        return a.name > b.name ? 1 : -1;
-      });
+        return this.$store.getters.sortFunc
     },
     deleteTask(id) {
       console.log(this.items.length);
