@@ -21,7 +21,7 @@
         class="ml-16 mb-10"
         dark
         color="indigo"
-        :disabled="this.newItems && newItems.length == 0"
+        :disabled="!newItems || newItems.trim().length === 0"
       >
         <v-icon dark> mdi-plus </v-icon></v-btn
       >
@@ -33,7 +33,7 @@
           id="table"
           class="red--text font-family: monospace"
         >
-          {{ item.id }}
+          {{ index }}
         </v-list-item-content>
 
         <v-list-item-content v-if="!item.isEdit">
@@ -47,7 +47,9 @@
         ></v-text-field>
 
         <v-list-item-icon v-if="item.isEdit">
-          <v-icon color="primary" v-on:click="saveTask(index)"
+          <v-icon
+            color="primary"
+            v-on:click="saveTask(index, (Editsnackbar = true))"
             >mdi-content-save</v-icon
           >
         </v-list-item-icon>
@@ -91,6 +93,17 @@
         </template>
       </v-snackbar>
     </div>
+    <div class="text-center">
+      <v-snackbar v-model="Editsnackbar">
+        {{ UpdatedText }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn color="red" text v-bind="attrs" @click="Addsnackbar = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </div>
   </v-app>
 </template>
 
@@ -102,13 +115,15 @@ export default {
   data() {
     return {
       eTask: "",
-      loading3: false,
+      // loading3: false,
       loading: false,
       DeletedText: "Your data is successfully Deleted ",
       AddedText: "Your data is  successfully Added ",
+      UpdatedText: "Your data is  successfully Edit ",
       newItems: "",
       snackbar: "",
       Addsnackbar: "",
+      Editsnackbar: "",
     };
   },
 
@@ -130,21 +145,19 @@ export default {
       this.eTask = this.items[index].name;
     },
     saveTask(index) {
-      console.log(index);
       this.updatenewItems({ index: index, newItems: this.eTask });
     },
 
     handleAddItems() {
-      if (this.newItems.trim && this.newItems.trim().length > 0) {
+      if (this.newItems && this.newItems.trim().length > 0) {
         {
           this.addItems({
+            Addsnackbar: true,
             isEdit: false,
             name: this.newItems,
             id: this.items.length + 1,
           });
         }
-      } else {
-        alert("Enter some value");
       }
       this.newItems = "";
     },
