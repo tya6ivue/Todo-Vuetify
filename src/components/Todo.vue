@@ -6,39 +6,60 @@
     <span>
       <v-text-field
         placeholder="Type here"
-        v-model="newItems"
         clearable
         flat
         solo-inverted
-        hide-details
-        prepend-inner-icon="mdi-magnify"
-        label=""
+        class="mx-16"
+        v-model="newItems"
       ></v-text-field>
 
-      <div>
-        <v-btn
-          @click="addItems"
-          class="mx-10"
-          fab
-          dark
-          color="indigo"
-          :disabled="newItems.length === 0"
-        >
-          <v-icon dark> mdi-plus </v-icon></v-btn
-        >
-      </div>
+      <v-btn
+        depressed
+        @click="handleAddItems((AddMessage = true))"
+        class="ml-16 mb-10"
+        dark
+        color="indigo"
+        :disabled="!newItems || newItems.trim().length === 0"
+      >
+        <v-icon dark> mdi-plus </v-icon></v-btn
+      >
     </span>
 
     <ul class="list">
-      <v-list-item v-for="(item, index) in items" :key="index">
-        <v-list-item-content class="red accent-2--text pink lighten-5">
-          {{ item.name }}
+      <v-list-item v-for="(item, index) in UpdItems" :key="index">
+        <v-list-item-content class="red--text font-family: monospace">
+          {{ index }}
         </v-list-item-content>
+
+        <v-list-item-content v-if="!item.isEdit">
+          <v-list-item-title v-text="item.name"> </v-list-item-title>
+        </v-list-item-content>
+
+        <v-text-field
+          v-if="item.isEdit"
+          v-model="EditTask"
+          label="Edit Task"
+        ></v-text-field>
+
+        <v-list-item-icon v-if="item.isEdit">
+          <v-icon
+            color="primary"
+            v-on:click="saveTask(index, (EditMessage = true))"
+            :disabled="!EditTask || EditTask.trim().length === 0"
+            >mdi-content-save</v-icon
+          >
+        </v-list-item-icon>
+        <v-list-item-icon v-if="!item.isEdit">
+          <v-icon color="primary" v-on:click="editTask(index)"
+            >mdi-pencil</v-icon
+          >
+        </v-list-item-icon>
+
         <v-btn
-          @click="deleteTask(index)"
+          @click="deleteTask(item.id), (snackbar = true)"
           :loading="loading"
           class="ma-1"
-          color="purple darken-3"
+          color="primary"
           plain
         >
           Delete
@@ -47,16 +68,33 @@
     </ul>
 
     <div class="text-center">
-      <v-btn dark color="red darken-2" @click="snackbar = true">
-        Upload
-        <v-icon right dark> mdi-cloud-upload </v-icon>
-      </v-btn>
-
       <v-snackbar v-model="snackbar">
-        {{ text }}
+        {{ DeletedText }}
 
         <template v-slot:action="{ attrs }">
           <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </div>
+    <div class="text-center">
+      <v-snackbar v-model="AddMessage">
+        {{ AddedText }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn color="red" text v-bind="attrs" @click="AddMessage = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </div>
+    <div class="text-center">
+      <v-snackbar v-model="EditMessage">
+        {{ UpdatedText }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn color="red" text v-bind="attrs" @click="AddMessage = false">
             Close
           </v-btn>
         </template>
@@ -66,47 +104,68 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 export default {
   name: "todo",
+
   data() {
     return {
-      newItems: "",
-
-      loading3: false,
+      EditTask: "",
       loading: false,
+      DeletedText: "Your data is successfully Deleted ",
+      AddedText: "Your data is  successfully Added ",
+      UpdatedText: "Your data is  successfully Edit ",
+      newItems: "",
       snackbar: "",
-      text: "Your data is sussesfully added",
-
-      items: [{ id: 1, name: "Jack" }],
+      AddMessage: "",
+      EditMessage: "",
     };
   },
-  methods: {
-    sortFunc() {
-      return this.items.slice().sort(function (a, b) {
-        return a.name > b.name ? 1 : -1;
-      });
+
+  computed: {
+    UpdItems() {
+      return this.$store.state.todo.items;
     },
-    addItems() {
-      this.items.push({
-        id: this.sortFunc.length + 1,
-        name: this.newItems,
-        completed: false,
-      });
+
+    ...mapState("todo", ["items"]),
+  },
+
+  methods: {
+    ...mapActions("todo", ["addItems"]),
+    ...mapActions("todo", ["toEdit"]),
+    ...mapActions("todo", ["updatenewItems"]),
+
+    editTask(index) {
+      this.toEdit(index);
+      this.EditTask = this.items[index].name;
+    },
+    saveTask(index) {
+      this.updatenewItems({ index: index, newItems: this.EditTask });
+    },
+
+    handleAddItems() {
+      if (this.newItems && this.newItems.trim().length > 0) {
+        this.addItems({
+          AddMessage: true,
+          isEdit: false,
+          name: this.newItems,
+          id: this.items.length + 1,
+        });
+      }
       this.newItems = "";
     },
 
-    deleteTask(index) {
-      console.log(index);
-      this.items.splice(index, 1);
-      console.log(this.items);
+    deleteTask(id) {
+      var i = 0;
+      var rindex = 0;
+      for (i = 0; i < this.items.length; i++) {
+        if (this.items[i].id == id) {
+          rindex = i;
+        }
+      }
+      this.items.splice(rindex, 1);
     },
   },
 };
 </script>
 
-
-<style scoped>
-.dfer {
-  margin-left: 10px;
-}
-</style>
