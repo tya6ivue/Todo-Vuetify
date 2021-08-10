@@ -6,7 +6,7 @@ const state = {
   ],
 };
 const mutations = {
-  Add_Items: (state, payload) => {
+  ADD_ITEMS(state, payload) {
     state.items.push(payload);
   },
 
@@ -19,26 +19,24 @@ const mutations = {
       }
     }
   },
-  UPDATE_newItems: (state, payload) => {
+  UPDATE_NEWITEMS(state, payload) {
     if (payload.newItems.trim().length > 0) {
       state.items[payload.index].name = payload.newItems;
       state.items[payload.index].isEdit = false;
-    } else {
-      alert("enter some value");
     }
   },
 };
 
 const actions = {
-  addItems: ({ commit }, payload) => {
-    commit("Add_Items", payload);
+  addItems({ commit }, payload) {
+    commit("ADD_ITEMS", payload);
   },
 
-  toEdit: (context, payload) => {
+  toEdit(context, payload) {
     context.commit("TO_EDIT", payload);
   },
-  updatenewItems: (context, payload) => {
-    context.commit("UPDATE_newItems", payload);
+  updatenewItems(context, payload) {
+    context.commit("UPDATE_NEWITEMS", payload);
   },
 };
 

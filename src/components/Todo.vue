@@ -2,11 +2,9 @@
 
 <template>
   <v-app>
-    <h1 class="text">Enter Todo</h1>
+    <h1>Enter Todo</h1>
     <span>
       <v-text-field
-        font-family:
-        monospace
         placeholder="Type here"
         clearable
         flat
@@ -17,7 +15,7 @@
 
       <v-btn
         depressed
-        @click="handleAddItems((Addsnackbar = true))"
+        @click="handleAddItems((AddMessage = true))"
         class="ml-16 mb-10"
         dark
         color="indigo"
@@ -28,11 +26,8 @@
     </span>
 
     <ul class="list">
-      <v-list-item class="box" v-for="(item, index) in UpdItems" :key="index">
-        <v-list-item-content
-          id="table"
-          class="red--text font-family: monospace"
-        >
+      <v-list-item v-for="(item, index) in UpdItems" :key="index">
+        <v-list-item-content class="red--text font-family: monospace">
           {{ index }}
         </v-list-item-content>
 
@@ -42,14 +37,15 @@
 
         <v-text-field
           v-if="item.isEdit"
-          v-model="eTask"
+          v-model="EditTask"
           label="Edit Task"
         ></v-text-field>
 
         <v-list-item-icon v-if="item.isEdit">
           <v-icon
             color="primary"
-            v-on:click="saveTask(index, (Editsnackbar = true))"
+            v-on:click="saveTask(index, (EditMessage = true))"
+            :disabled="!EditTask || EditTask.trim().length === 0"
             >mdi-content-save</v-icon
           >
         </v-list-item-icon>
@@ -83,22 +79,22 @@
       </v-snackbar>
     </div>
     <div class="text-center">
-      <v-snackbar v-model="Addsnackbar">
+      <v-snackbar v-model="AddMessage">
         {{ AddedText }}
 
         <template v-slot:action="{ attrs }">
-          <v-btn color="red" text v-bind="attrs" @click="Addsnackbar = false">
+          <v-btn color="red" text v-bind="attrs" @click="AddMessage = false">
             Close
           </v-btn>
         </template>
       </v-snackbar>
     </div>
     <div class="text-center">
-      <v-snackbar v-model="Editsnackbar">
+      <v-snackbar v-model="EditMessage">
         {{ UpdatedText }}
 
         <template v-slot:action="{ attrs }">
-          <v-btn color="red" text v-bind="attrs" @click="Addsnackbar = false">
+          <v-btn color="red" text v-bind="attrs" @click="AddMessage = false">
             Close
           </v-btn>
         </template>
@@ -114,16 +110,15 @@ export default {
 
   data() {
     return {
-      eTask: "",
-      // loading3: false,
+      EditTask: "",
       loading: false,
       DeletedText: "Your data is successfully Deleted ",
       AddedText: "Your data is  successfully Added ",
       UpdatedText: "Your data is  successfully Edit ",
       newItems: "",
       snackbar: "",
-      Addsnackbar: "",
-      Editsnackbar: "",
+      AddMessage: "",
+      EditMessage: "",
     };
   },
 
@@ -142,22 +137,20 @@ export default {
 
     editTask(index) {
       this.toEdit(index);
-      this.eTask = this.items[index].name;
+      this.EditTask = this.items[index].name;
     },
     saveTask(index) {
-      this.updatenewItems({ index: index, newItems: this.eTask });
+      this.updatenewItems({ index: index, newItems: this.EditTask });
     },
 
     handleAddItems() {
       if (this.newItems && this.newItems.trim().length > 0) {
-        {
-          this.addItems({
-            Addsnackbar: true,
-            isEdit: false,
-            name: this.newItems,
-            id: this.items.length + 1,
-          });
-        }
+        this.addItems({
+          AddMessage: true,
+          isEdit: false,
+          name: this.newItems,
+          id: this.items.length + 1,
+        });
       }
       this.newItems = "";
     },
@@ -176,18 +169,3 @@ export default {
 };
 </script>
 
-
-<style scoped>
-.box {
-  max-width: 600px;
-  border: 1px solid rebeccapurple;
-  margin: auto;
-}
-.input {
-  max-width: 50%;
-  margin-left: 16px;
-}
-.text {
-  text-align: center;
-}
-</style>
