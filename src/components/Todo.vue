@@ -33,8 +33,30 @@
           id="table"
           class="red--text font-family: monospace"
         >
-          {{ item.name }}
+          {{ item.id }}
         </v-list-item-content>
+
+        <v-list-item-content v-if="!item.isEdit">
+          <v-list-item-title v-text="item.name"> </v-list-item-title>
+        </v-list-item-content>
+
+        <v-text-field
+          v-if="item.isEdit"
+          v-model="eTask"
+          label="Edit Task"
+        ></v-text-field>
+
+        <v-list-item-icon v-if="item.isEdit">
+          <v-icon color="primary" v-on:click="saveTask(index)"
+            >mdi-content-save</v-icon
+          >
+        </v-list-item-icon>
+        <v-list-item-icon v-if="!item.isEdit">
+          <v-icon color="primary" v-on:click="editTask(index)"
+            >mdi-pencil</v-icon
+          >
+        </v-list-item-icon>
+
         <v-btn
           @click="deleteTask(item.id), (snackbar = true)"
           :loading="loading"
@@ -79,9 +101,9 @@ export default {
 
   data() {
     return {
+      eTask: "",
       loading3: false,
       loading: false,
-
       DeletedText: "Your data is successfully Deleted ",
       AddedText: "Your data is  successfully Added ",
       newItems: "",
@@ -100,13 +122,25 @@ export default {
 
   methods: {
     ...mapActions("todo", ["addItems"]),
+    ...mapActions("todo", ["toEdit"]),
+    ...mapActions("todo", ["updatenewItems"]),
+
+    editTask(index) {
+      this.toEdit(index);
+      this.eTask = this.items[index].name;
+    },
+    saveTask(index) {
+      console.log(index);
+      this.updatenewItems({ index: index, newItems: this.eTask });
+    },
+
     handleAddItems() {
       if (this.newItems.trim && this.newItems.trim().length > 0) {
         {
           this.addItems({
+            isEdit: false,
             name: this.newItems,
             id: this.items.length + 1,
-            completed: false,
           });
         }
       } else {
